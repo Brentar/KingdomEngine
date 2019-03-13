@@ -1,67 +1,106 @@
-﻿using DesktopKingdom.Model;
-using System;
-using KingdomEngine;
+﻿using System;
+using KingdomEngine.Model;
 
-namespace DesktopKingdom
+namespace KingdomEngine
 {
-    public class KingdomCalculator : IKingdomCalculator
+    public class CostCalculator : IKingdomCalculator
     {
+        private const int StartingTurn = 1;
         private readonly KingdomSettings settings;
+        private const double PercentageConversionNumber = .01;
 
-        public KingdomCalculator(KingdomSettings settings)
+        public CostCalculator(KingdomSettings settings)
         {
             this.settings = settings;
+            Turn = StartingTurn;
         }
 
-        private double GetInflatedCost(int baseCost, int turn)
+        public int Turn { get; set; }
+
+        public TurnResults GetTurnResults (EndTurnPackage endTurnPackage)
+        {
+            int foodProduced = GetFoodProduction(endTurnPackage.FarmCount);
+            int foodConsumed = GetFoodConsumed(endTurnPackage.ArcherCount + endTurnPackage.KnightCount + endTurnPackage.PeasantCount);
+            int goldFromTaxes = GetTaxIncome(endTurnPackage.PeasantCount, endTurnPackage.MarketplaceCount);
+            int peasantsLost = GetPeasantLeaveCount(endTurnPackage.PeasantCount);
+            int peasantsGained = GetPeasantsGained(endTurnPackage.FarmCount, endTurnPackage.PeasantCount);
+
+            return new TurnResults
+            {
+                FoodConsumed = foodConsumed,
+                FoodProduced = foodProduced,
+                PeasantsGained = peasantsGained,
+                PeasantsLost = peasantsLost,
+                GoldFromTaxes = goldFromTaxes,
+            };
+        }
+
+        private int GetInflatedCost(int baseCost)
         {
             double cost = baseCost;
 
-            for (int i = 2; i < turn; i++)
+            for (int i = StartingTurn; i < Turn; i++)
             {
-                cost += (cost * this.settings.InflationRate);
+                cost += (cost * settings.InflationRate);
             }
 
-            return cost;
+            return Convert.ToInt32(cost);
         }
 
-        public int GetFarmCost(int turn)
+        public int GetFarmCost()
         {
-            int cost = Convert.ToInt32(GetInflatedCost(this.settings.BaseFarmCost, turn));
+            int cost = GetInflatedCost(settings.BaseFarmCost);
             return cost;
         }
 
         public int GetKnightCost()
         {
-            //int cost = Convert.ToInt32(GetInflatedCost(this.settings.BaseKnightCost));
-            return 60;//cost;
+            int cost = GetInflatedCost(settings.BaseKnightCost);
+            return cost;
         }
 
-        public int GetFoodConsumed(int personCount)
+        public int GetMarketplaceCost()
         {
-            return (personCount) * this.settings.FoodConsumptionRate;
+            int cost = Convert.ToInt32(GetInflatedCost(settings.BaseMarketplaceCost));
+            return cost;
         }
 
-        public int GetFoodProduction(int farmCount)
+        private int GetFoodConsumed(int personCount)
+        {
+            return personCount * settings.FoodConsumptionRate;
+        }
+
+        private int GetFoodProduction(int farmCount)
         {
             return farmCount * this.settings.FoodProductionRate;
         }
 
-        public int GetTaxIncome(int peasantCount, int marketplaceCount)
+        private int GetTaxIncome(int peasantCount, int marketplaceCount)
         {
-            int taxIncome = (int)(peasantCount * this.settings.PeasantIncome * this.settings.TaxRate);
-
+            int taxIncome = (peasantCount * settings.PeasantIncome * settings.TaxRate);
             int marketplaceMultiplier = Convert.ToInt32(marketplaceCount * .2);
-
             int additionalIncomeFromMarketplaces = taxIncome * marketplaceMultiplier;
 
             return taxIncome + additionalIncomeFromMarketplaces;
         }
 
-        public int GetMarketplaceCost(int turn)
+        public int GetPeasantLeaveCount(int peasantCount)
         {
-            int cost = Convert.ToInt32(GetInflatedCost(this.settings.BaseMarketplaceCost, turn));
-            return cost;
+            int peasantLeaveCount = 0;
+            int marketPlaceDiff = 0;
+            int farmDiff = 0;
+
+            if (marketPlaceDiff < 0) peasantLeaveCount += Math.Abs(marketPlaceDiff);
+            if (farmDiff < 0) peasantLeaveCount += Math.Abs(farmDiff);
+
+            var random = new Random();
+            int num = random.Next(1, 10);
+            double percentage = num * .01;
+            int peasantAttrition = Convert.ToInt32(peasantCount * percentage);
+
+            peasantLeaveCount += peasantAttrition;
+
+            return peasantLeaveCount;
         }
     }
 }

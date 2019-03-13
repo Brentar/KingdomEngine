@@ -1,3 +1,8 @@
-
-*.pdb
-obj/Debug/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs
+bin
+obj
+*.dll
+*.txt
+*.cache
+obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+*.dll
+*.dll

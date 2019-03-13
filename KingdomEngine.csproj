@@ -40,7 +40,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Buyer.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="IBuyer.cs" />
+    <Compile Include="InitialValues.cs" />
     <Compile Include="KingdomCalculator.cs" />
+    <Compile Include="Maybe.cs" />
+    <Compile Include="Model\EndTurnPackage.cs" />
     <Compile Include="Model\Farm.cs" />
     <Compile Include="Model\IKingdom.cs" />
     <Compile Include="IKingdomCalculator.cs" />
@@ -48,9 +53,9 @@
     <Compile Include="Model\KingdomSettings.cs" />
     <Compile Include="Model\Land.cs" />
     <Compile Include="Model\Peasant.cs" />
+    <Compile Include="Model\RaidHandler.cs" />
     <Compile Include="Model\RaidResults.cs" />
-    <Compile Include="Model\Town.cs" />
-    <Compile Include="Model\TurnStats.cs" />
+    <Compile Include="Model\TurnResults.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

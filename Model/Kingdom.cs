@@ -1,176 +1,84 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace KingdomEngine.Model
 {
     public class Kingdom : IKingdom
     {
-        private readonly IKingdomCalculator calculator;
+        private readonly IKingdomCalculator costCalculator;
+        private readonly IBuyer buyer;
+        private int peasantCount;
+        private List<TurnResults> turnResultsList;
 
-        public Kingdom(IKingdomCalculator calculator)
+        public Kingdom(IKingdomCalculator calculator, IBuyer buyer, InitialValues initialValues)
         {
-            this.calculator = calculator;
+            this.costCalculator = calculator;
+            this.buyer = buyer;
+            turnResultsList = new List<TurnResults>();
+            ArcherCount = initialValues.ArcherCount;
         }
 
-        public int PeasantCount { get; set; }
-        public int MerchantCount { get; set; }
-        public int Gold { get; set; }
-        public int Turn { get; set; }
-        public int KnightCount { get; set; }
-        public int ArcherCount { get; set; }
-        public int Food { get; set; }
-        public int Towns { get; set; }
-        public int MarketplaceCount { get; set; }
-        public int FarmCount { get; set; }
-        public double TaxRate { get; set; }
-        public int Lands { get { return FarmCount + MarketplaceCount; }  }
-        public int HappinessLevel { get; set; }                
-        public int BaseFarmCost { get; set; }
-        public int RaidChance { get; set; }
+        public int PeasantCount
+        {
+            get => peasantCount;
+            private set => peasantCount = value < 0 ? 0 : value;
+        }
+        public int KnightCount { get; private set; }
+        public int ArcherCount { get; private set; }
+        public int FoodCount { get; private set; }
+        public int MarketplaceCount { get; private set; }
+        public int FarmCount { get; private set; }
+        public double TaxRate { get; set; }   
+        public int Gold => buyer.Gold;
+        public int Turn => costCalculator.Turn;
+        public TurnResults TurnResults => turnResultsList.Last();
 
         public void BuyFarm()
         {
-            int cost = calculator.GetFarmCost(Turn);
-            if (Gold < cost) return;                        
-            Gold -= cost;
+            buyer.BuyFarm();
             FarmCount++;
         }
 
-        public TurnStats EndTurn()
+        public void BuyMarketplace()
         {
-            int foodProduced = this.calculator.GetFoodProduction(FarmCount);
-            int foodConsumed = this.calculator.GetFoodConsumed(ArcherCount + KnightCount + PeasantCount);
-            int goldFromTaxes = this.calculator.GetTaxIncome(PeasantCount, MarketplaceCount);
-            int peasantsLost = GetPeasantLeaveCount();
-            int peasantsGained = GetPeasantJoinCount();
-            bool raided = Raided();
-            RaidResults raidResults = raided ? GetRaidResults() : new RaidResults();
-
-            var turnStats = new TurnStats
-            {
-                FoodConsumed = foodConsumed,
-                FoodProduced = foodProduced,
-                PeasantsGained = peasantsGained,
-                PeasantsLost = peasantsLost,
-                GoldFromTaxes = goldFromTaxes,
-                Raided = raided,
-                RaidResults = raidResults
-            };
-
-            this.PeasantCount += peasantsGained;
-            this.PeasantCount -= peasantsLost;
-
-            if (raided)
-            {
-                this.PeasantCount -= raidResults.PeasantsKilled;
-                this.KnightCount -= raidResults.KnightsLost;
-                this.FarmCount -= raidResults.FarmsDestroyed;
-            }
-
-            ProduceFood();
-            ConsumeFood();
-
-            SetRaidChance();
-            this.Gold += goldFromTaxes;
-            this.Turn++;
-
-
-            return turnStats;
+            buyer.BuyMarketplace();
+            MarketplaceCount++;
         }
 
-        private void ProduceFood()
+        public void TrainKnight()
         {
-            int foodProduced = this.calculator.GetFoodProduction(FarmCount);
-            this.Food += foodProduced;
+            buyer.TrainKnight();
+            KnightCount++;
         }
 
-        private void ConsumeFood()
+        public void EndTurn()
         {
-            int foodConsumed = this.calculator.GetFoodConsumed(ArcherCount + KnightCount + PeasantCount);
-            this.Food -= foodConsumed;
+            var endTurnPackage = new EndTurnPackage { ArcherCount = ArcherCount, FarmCount = FarmCount, KnightCount = KnightCount };
+            TurnResults turnResults = costCalculator.GetTurnResults(endTurnPackage);
+
+            PeasantCount += turnResults.PeasantsGained;
+            PeasantCount -= turnResults.PeasantsLost;
+
+            turnResultsList.Add(turnResults);
+
+            costCalculator.Turn++;
         }
 
-        private int GetPeasantJoinCount()
+        public int GetFarmCost()
         {
-            int incomingPeasants = 0;
-            int marketplaceDiff = 0;
-            int farmDiff = 0;
-
-            if (farmDiff > 0) incomingPeasants += farmDiff;
-            if (marketplaceDiff > 0) incomingPeasants += marketplaceDiff;
-
-            return incomingPeasants;
+            return costCalculator.GetFarmCost();
         }
 
-        private int GetPeasantLeaveCount()
+        public int GetKnightCost()
         {
-            int peasantLeaveCount = 0;
-            int marketPlaceDiff = 0;
-            int farmDiff = 0;
-
-            if (marketPlaceDiff < 0) peasantLeaveCount += Math.Abs(marketPlaceDiff);
-            if (farmDiff < 0) peasantLeaveCount += Math.Abs(farmDiff);
-
-            var random = new Random();
-            int num = random.Next(1, 10);
-            double percentage = num * .01;
-            int peasantAttrition = Convert.ToInt32(this.PeasantCount * percentage);
-
-            peasantLeaveCount += peasantAttrition;
-
-            return peasantLeaveCount;
+            int knightCost = costCalculator.GetKnightCost();
+            return knightCost;
         }
 
-
-
-        private int GetFoodSurplus()
+        public int GetMarketplaceCost()
         {
-            int requiredFood = this.calculator.GetFoodProduction(FarmCount);
-            int foodProduced = this.calculator.GetFoodProduction(this.FarmCount);
-            bool foodSurplusExists = requiredFood < foodProduced;
-
-            if (foodSurplusExists)
-            {
-                int overage = foodProduced - requiredFood;
-                double percentOverage = overage / (float)requiredFood;
-            }
-
-            // todo: finish
-            return 0;
-        }
-
-        private void SetRaidChance()
-        {
-            RaidChance = new Random().Next(1, 40);
-        }
-
-        private bool Raided()
-        {
-            var rnd = new Random();
-            int[] nums = new int[RaidChance];
-            for (int i = 0; i < RaidChance; i++)
-            {
-                nums[i] = rnd.Next(1, 101);
-            }
-
-            int hit = rnd.Next(1, 101);
-            return nums.Contains(hit);
-        }
-
-        private RaidResults GetRaidResults()
-        {
-            int enemyCount = Turn*new Random().Next(1, 10);
-            bool win = KnightCount > enemyCount;
-
-            var raidResults = new RaidResults
-            {
-                Win = win,
-                KnightsLost = Convert.ToInt32(enemyCount/2),
-                PeasantsKilled = win ? 0: Convert.ToInt32(enemyCount / 3),
-                FarmsDestroyed = win ? 0: Convert.ToInt32(this.FarmCount * .1)
-            };
-
-            return raidResults;            
+            int marketplaceCost = costCalculator.GetMarketplaceCost();
+            return marketplaceCost;
         }
     }
 }

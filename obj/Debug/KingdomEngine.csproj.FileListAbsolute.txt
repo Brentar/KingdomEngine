@@ -1,4 +1,0 @@
-C:\Users\brreed\OneDrive\DesktopKingdom\KingdomEngine\bin\Debug\KingdomEngine.dll
-C:\Users\brreed\OneDrive\DesktopKingdom\KingdomEngine\bin\Debug\KingdomEngine.pdb
-C:\Users\brreed\OneDrive\DesktopKingdom\KingdomEngine\obj\Debug\KingdomEngine.dll
-C:\Users\brreed\OneDrive\DesktopKingdom\KingdomEngine\obj\Debug\KingdomEngine.pdb

@@ -1,26 +1,68 @@
-﻿using KingdomEngine.Model;
+﻿using System;
 
 namespace KingdomEngine
 {
-    public interface IBuyer
+    public class Buyer : IBuyer
     {
-        void BuyFarm();
-        void BuyMarketplace();
-    }
-    public class Buyer
-    {
-        private IKingdomCalculator calculator;
-        private Kingdom kingdom;
+        private readonly IKingdomCalculator calculator;
+        public int Gold { get; private set; }
 
-        public Buyer(IKingdomCalculator calculator, Kingdom kingdom)
+        public Buyer(IKingdomCalculator calculator, int initialGold)
         {
             this.calculator = calculator;
-            this.kingdom = kingdom;
+            Gold = initialGold;
         }
+
+        public void AddGold(int amount)
+        {
+            if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount));
+            Gold += amount;
+        }
+
         public void BuyFarm()
         {
-            int farmCost = this.calculator.GetFarmCost(this.kingdom.Turn);
+            int cost = calculator.GetFarmCost();
+            SpendGold(cost);
+        }
 
+        public void BuyMarketplace()
+        {
+            int cost = calculator.GetMarketplaceCost();
+            SpendGold(cost);
+        }
+
+        public void TrainKnight()
+        {
+            int cost = calculator.GetKnightCost();
+            SpendGold(cost);
+        }
+
+        public bool TryTrainKnight()
+        {
+            int cost = calculator.GetKnightCost();
+            bool goldSpent = TrySpendGold(cost);
+            return goldSpent;
+        }
+
+        private bool TrySpendGold(int cost)
+        {
+            if (Gold < cost)
+            {
+                return false;
+            }
+
+            Gold -= cost;
+            return true;
+        }
+
+        private void SpendGold(int cost)
+        {
+            if (Gold < cost)
+            {
+                throw new NotEnoughGoldException();
+            }
+
+            Gold -= cost;
         }
     }
 }
