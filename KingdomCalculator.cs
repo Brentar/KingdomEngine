@@ -25,7 +25,7 @@ namespace KingdomEngine
             int peasantsLost = GetPeasantLeaveCount(endTurnPackage.PeasantCount);
             int peasantsGained = GetPeasantsGained(endTurnPackage.FarmCount, endTurnPackage.PeasantCount);
 
-            return new TurnResults
+            return new TurnResults(settings)
             {
                 FoodConsumed = foodConsumed,
                 FoodProduced = foodProduced,
@@ -101,6 +101,18 @@ namespace KingdomEngine
             peasantLeaveCount += peasantAttrition;
 
             return peasantLeaveCount;
+        }
+
+        private int GetPeasantsGained(int farmCount, int peasantCount)
+        {
+            const int gainMinimum = 1;
+            const int noGainResult = 0;
+            int totalCapacity = settings.PeasantsPerFarm * farmCount;
+            int overage = totalCapacity - peasantCount;
+
+            if (overage < gainMinimum) return noGainResult;
+            double peasantsGained = overage * (settings.PeasantGainPercentage * PercentageConversionNumber);
+            return Convert.ToInt32(peasantsGained);
         }
     }
 }
