@@ -3,3 +3,4 @@ obj
 *.dll
 *.txt
 *.cache
+.vs
