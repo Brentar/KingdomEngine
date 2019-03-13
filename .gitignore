@@ -3,6 +3,3 @@ obj
 *.dll
 *.txt
 *.cache
-obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
-*.dll
-*.dll
