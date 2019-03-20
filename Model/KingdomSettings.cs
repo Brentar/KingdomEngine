@@ -2,7 +2,6 @@
 {
     public class KingdomSettings
     {
-        public int MerchantCost { get; set; }
         public int BaseFarmCost { get; set; }
         public int BaseKnightCost { get; set; }
         public int BaseMarketplaceCost { get; set; }

@@ -5,12 +5,12 @@ namespace KingdomEngine.Model
 {
     public class Kingdom : IKingdom
     {
-        private readonly IKingdomCalculator costCalculator;
+        private readonly ICostCalculator costCalculator;
         private readonly IBuyer buyer;
         private int peasantCount;
         private List<TurnResults> turnResultsList;
-
-        public Kingdom(IKingdomCalculator calculator, IBuyer buyer, InitialValues initialValues)
+        
+        public Kingdom(ICostCalculator calculator, IBuyer buyer, InitialValues initialValues)
         {
             this.costCalculator = calculator;
             this.buyer = buyer;
@@ -30,8 +30,8 @@ namespace KingdomEngine.Model
         public int FarmCount { get; private set; }
         public double TaxRate { get; set; }   
         public int Gold => buyer.Gold;
-        public int Turn => costCalculator.Turn;
         public TurnResults TurnResults => turnResultsList.Last();
+        public int Turn { get; set; }
 
         public void BuyFarm()
         {
@@ -54,14 +54,14 @@ namespace KingdomEngine.Model
         public void EndTurn()
         {
             var endTurnPackage = new EndTurnPackage { ArcherCount = ArcherCount, FarmCount = FarmCount, KnightCount = KnightCount };
-            TurnResults turnResults = costCalculator.GetTurnResults(endTurnPackage);
+            TurnResults turnResults = new TurnResults();
 
             PeasantCount += turnResults.PeasantsGained;
             PeasantCount -= turnResults.PeasantsLost;
 
             turnResultsList.Add(turnResults);
 
-            costCalculator.Turn++;
+            Turn++;
         }
 
         public int GetFarmCost()

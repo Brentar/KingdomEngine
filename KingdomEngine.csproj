@@ -43,12 +43,12 @@
     <Compile Include="Exceptions.cs" />
     <Compile Include="IBuyer.cs" />
     <Compile Include="InitialValues.cs" />
-    <Compile Include="KingdomCalculator.cs" />
+    <Compile Include="CostCalculator.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="Model\EndTurnPackage.cs" />
     <Compile Include="Model\Farm.cs" />
     <Compile Include="Model\IKingdom.cs" />
-    <Compile Include="IKingdomCalculator.cs" />
+    <Compile Include="ICostCalculator.cs" />
     <Compile Include="Model\Kingdom.cs" />
     <Compile Include="Model\KingdomSettings.cs" />
     <Compile Include="Model\Land.cs" />

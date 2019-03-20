@@ -4,10 +4,10 @@ namespace KingdomEngine
 {
     public class Buyer : IBuyer
     {
-        private readonly IKingdomCalculator calculator;
+        private readonly ICostCalculator calculator;
         public int Gold { get; private set; }
 
-        public Buyer(IKingdomCalculator calculator, int initialGold)
+        public Buyer(ICostCalculator calculator, int initialGold)
         {
             this.calculator = calculator;
             Gold = initialGold;
