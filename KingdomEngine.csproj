@@ -46,13 +46,11 @@
     <Compile Include="CostCalculator.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="Model\EndTurnPackage.cs" />
-    <Compile Include="Model\Farm.cs" />
     <Compile Include="Model\IKingdom.cs" />
     <Compile Include="ICostCalculator.cs" />
     <Compile Include="Model\Kingdom.cs" />
     <Compile Include="Model\KingdomSettings.cs" />
     <Compile Include="Model\Land.cs" />
-    <Compile Include="Model\Peasant.cs" />
     <Compile Include="Model\RaidHandler.cs" />
     <Compile Include="Model\RaidResults.cs" />
     <Compile Include="Model\TurnResults.cs" />

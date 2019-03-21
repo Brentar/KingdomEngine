@@ -7,13 +7,16 @@ namespace KingdomEngine.Model
     {
         private readonly ICostCalculator costCalculator;
         private readonly IBuyer buyer;
+        private readonly KingdomSettings settings;
         private int peasantCount;
         private List<TurnResults> turnResultsList;
         
-        public Kingdom(ICostCalculator calculator, IBuyer buyer, InitialValues initialValues)
+        public Kingdom(ICostCalculator calculator, IBuyer buyer, KingdomSettings settings, InitialValues initialValues)
         {
             this.costCalculator = calculator;
             this.buyer = buyer;
+            this.settings = settings;
+
             turnResultsList = new List<TurnResults>();
             ArcherCount = initialValues.ArcherCount;
         }
@@ -23,6 +26,7 @@ namespace KingdomEngine.Model
             get => peasantCount;
             private set => peasantCount = value < 0 ? 0 : value;
         }
+
         public int KnightCount { get; private set; }
         public int ArcherCount { get; private set; }
         public int FoodCount { get; private set; }
@@ -54,10 +58,11 @@ namespace KingdomEngine.Model
         public void EndTurn()
         {
             var endTurnPackage = new EndTurnPackage { ArcherCount = ArcherCount, FarmCount = FarmCount, KnightCount = KnightCount };
-            TurnResults turnResults = new TurnResults();
+            var turnResults = new TurnResults(settings);
 
             PeasantCount += turnResults.PeasantsGained;
             PeasantCount -= turnResults.PeasantsLost;
+            FoodCount += turnResults.FoodProduced;
 
             turnResultsList.Add(turnResults);
 
