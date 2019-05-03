@@ -7,5 +7,6 @@
         int ArcherCount { get; }
         int KnightCount { get; }
         int MarketplaceCount { get; }
+        void EndTurn();
     }
 }

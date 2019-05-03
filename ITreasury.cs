@@ -1,12 +1,14 @@
 ﻿namespace KingdomEngine
 {
-    public interface IBuyer
+    public interface ITreasury
     {
         int Gold { get; }
         void BuyFarm();
         void BuyMarketplace();
         void TrainKnight();
-        bool TryTrainKnight();
         void AddGold(int amount);
+        int GetFarmCost();
+        int GetMarketplaceCost();
+        int GetKnightCost();
     }
 }

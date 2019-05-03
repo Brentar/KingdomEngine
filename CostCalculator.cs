@@ -4,49 +4,23 @@ using KingdomEngine.Model;
 namespace KingdomEngine
 {
     public class CostCalculator : ICostCalculator
-    {
-        private const int StartingInflationIndex = 1;
-        private readonly KingdomSettings settings;
-        private int inflationIndex;
-
-        public CostCalculator(KingdomSettings settings)
+    {        
+        private readonly CostCalculatorSettings settings;
+        
+        public CostCalculator(CostCalculatorSettings settings)
         {
             this.settings = settings;
         }
 
-        public void IncrementInflation()
+        public int FarmCost { get; set; }
+        public int MarketplaceCost { get; set; }
+        public int KnightCost { get; set; }
+
+        public void InflateCosts()
         {
-            inflationIndex++;
-        }
-
-        public int GetFarmCost()
-        {
-            int cost = GetInflatedCost(settings.BaseFarmCost);
-            return cost;
-        }
-
-        public int GetKnightCost()
-        {
-            int cost = GetInflatedCost(settings.BaseKnightCost);
-            return cost;
-        }
-
-        public int GetMarketplaceCost()
-        {
-            int cost = Convert.ToInt32(GetInflatedCost(settings.BaseMarketplaceCost));
-            return cost;
-        }
-
-        private int GetInflatedCost(int baseCost)
-        {
-            double cost = baseCost;
-
-            for (int i = StartingInflationIndex; i < inflationIndex; i++)
-            {
-                cost += cost * settings.InflationRate;
-            }
-
-            return Convert.ToInt32(cost);
+            FarmCost = FarmCost * settings.InflationRate;
+            MarketplaceCost = MarketplaceCost * settings.InflationRate;
+            KnightCost = KnightCost * settings.InflationRate;
         }
     }
 }

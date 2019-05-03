@@ -5,60 +5,63 @@ namespace KingdomEngine.Model
 {
     public class Kingdom : IKingdom
     {
-        private readonly ICostCalculator costCalculator;
-        private readonly IBuyer buyer;
-        private readonly KingdomSettings settings;
-        private int peasantCount;
-        private List<TurnResults> turnResultsList;
+        private readonly ITreasury treasury;
+        private readonly IEndTurnCalculator endTurnCalculator;
         
-        public Kingdom(ICostCalculator calculator, IBuyer buyer, KingdomSettings settings, InitialValues initialValues)
+        public Kingdom(ITreasury treasury, IEndTurnCalculator endTurnCalculator)
         {
-            this.costCalculator = calculator;
-            this.buyer = buyer;
-            this.settings = settings;
-
-            turnResultsList = new List<TurnResults>();
-            ArcherCount = initialValues.ArcherCount;
+            this.treasury = treasury;
+            this.endTurnCalculator = endTurnCalculator;
         }
 
-        public int PeasantCount
-        {
-            get => peasantCount;
-            private set => peasantCount = value < 0 ? 0 : value;
-        }
-
+        public int PeasantCount { get; private set; }
         public int KnightCount { get; private set; }
         public int ArcherCount { get; private set; }
         public int FoodCount { get; private set; }
         public int MarketplaceCount { get; private set; }
         public int FarmCount { get; private set; }
         public double TaxRate { get; set; }   
-        public int Gold => buyer.Gold;
-        public TurnResults TurnResults => turnResultsList.Last();
+        public int Gold => treasury.Gold;
         public int Turn { get; set; }
 
         public void BuyFarm()
         {
-            buyer.BuyFarm();
+            treasury.BuyFarm();
             FarmCount++;
         }
 
         public void BuyMarketplace()
         {
-            buyer.BuyMarketplace();
+            treasury.BuyMarketplace();
             MarketplaceCount++;
         }
 
         public void TrainKnight()
         {
-            buyer.TrainKnight();
+            treasury.TrainKnight();
             KnightCount++;
+        }
+
+        public int GetFarmCost()
+        {
+            return treasury.GetFarmCost();
+        }
+
+        public int GetKnightCost()
+        {
+            return treasury.GetKnightCost();
+        }
+
+        public int GetMarketplaceCost()
+        {
+            return treasury.GetMarketplaceCost();
         }
 
         public void EndTurn()
         {
+            endTurnCalculator.
             var endTurnPackage = new EndTurnPackage { ArcherCount = ArcherCount, FarmCount = FarmCount, KnightCount = KnightCount };
-            var turnResults = new TurnResults(settings);
+            var turnResults = endTurnCalculator
 
             PeasantCount += turnResults.PeasantsGained;
             PeasantCount -= turnResults.PeasantsLost;
@@ -67,23 +70,6 @@ namespace KingdomEngine.Model
             turnResultsList.Add(turnResults);
 
             Turn++;
-        }
-
-        public int GetFarmCost()
-        {
-            return costCalculator.GetFarmCost();
-        }
-
-        public int GetKnightCost()
-        {
-            int knightCost = costCalculator.GetKnightCost();
-            return knightCost;
-        }
-
-        public int GetMarketplaceCost()
-        {
-            int marketplaceCost = costCalculator.GetMarketplaceCost();
-            return marketplaceCost;
         }
     }
 }
