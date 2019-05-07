@@ -2,17 +2,28 @@
 {
     public class CostCalculatorSettings
     {
-        public CostCalculatorSettings(int inflationRate, int baseFarmCost, int baseKnightCost, int baseMarketplaceCost)
+        public CostCalculatorSettings()
+        {
+        }
+
+        public CostCalculatorSettings(
+            uint inflationRate,
+            uint baseFarmCost,
+            uint baseKnightCost,
+            uint baseMarketplaceCost,
+            uint baseArcherCost)
         {
             InflationRate = inflationRate;
             BaseFarmCost = baseFarmCost;
             BaseKnightCost = baseKnightCost;
             BaseMarketplaceCost = baseMarketplaceCost;
+            BaseArcherCost = baseArcherCost;
         }
 
-        public int InflationRate { get; set; }
-        public int BaseFarmCost { get; set; }
-        public int BaseKnightCost { get; set; }
-        public int BaseMarketplaceCost { get; set; }
+        public uint InflationRate { get; set; }
+        public uint BaseFarmCost { get; set; }
+        public uint BaseKnightCost { get; set; }
+        public uint BaseMarketplaceCost { get; set; }
+        public uint BaseArcherCost { get; set; }
     }
 }

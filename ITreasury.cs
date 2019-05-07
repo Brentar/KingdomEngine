@@ -2,13 +2,15 @@
 {
     public interface ITreasury
     {
-        int Gold { get; }
+        uint Gold { get; }
         void BuyFarm();
         void BuyMarketplace();
         void TrainKnight();
-        void AddGold(int amount);
-        int GetFarmCost();
-        int GetMarketplaceCost();
-        int GetKnightCost();
+        void AddGold(uint amount);
+        uint GetFarmCost();
+        uint GetMarketplaceCost();
+        uint GetKnightCost();
+        void InflateCosts();
+        void TrainArcher();
     }
 }

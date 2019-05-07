@@ -2,9 +2,10 @@
 {
     public interface ICostCalculator
     {
-        int FarmCost { get; }
-        int MarketplaceCost { get; }
-        int KnightCost { get; }
+        uint FarmCost { get; }
+        uint MarketplaceCost { get; }
+        uint KnightCost { get; }
+        uint ArcherCost { get; }
         void InflateCosts();
     }
 }

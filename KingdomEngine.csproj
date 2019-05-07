@@ -40,22 +40,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IEndTurnCalculator.cs" />
-    <Compile Include="Treasury.cs" />
-    <Compile Include="Exceptions.cs" />
+    <Compile Include="Logic\Treasury.cs" />
+    <Compile Include="Utility\Exceptions.cs" />
     <Compile Include="ITreasury.cs" />
-    <Compile Include="InitialValues.cs" />
-    <Compile Include="CostCalculator.cs" />
-    <Compile Include="Maybe.cs" />
+    <Compile Include="Model\InitialValues.cs" />
+    <Compile Include="Logic\CostCalculator.cs" />
+    <Compile Include="Utility\Maybe.cs" />
     <Compile Include="Model\CostCalculatorSettings.cs" />
     <Compile Include="Model\EndTurnPackage.cs" />
-    <Compile Include="Model\IKingdom.cs" />
+    <Compile Include="IKingdom.cs" />
     <Compile Include="ICostCalculator.cs" />
-    <Compile Include="Model\Kingdom.cs" />
+    <Compile Include="Logic\Kingdom.cs" />
     <Compile Include="Model\EndTurnSettings.cs" />
-    <Compile Include="Model\Land.cs" />
-    <Compile Include="Model\RaidHandler.cs" />
+    <Compile Include="Logic\RaidHandler.cs" />
     <Compile Include="Model\RaidResults.cs" />
-    <Compile Include="Model\EndTurnCalculator.cs" />
+    <Compile Include="Logic\EndTurnCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

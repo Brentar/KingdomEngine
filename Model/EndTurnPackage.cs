@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KingdomEngine.Model
+﻿namespace KingdomEngine.Model
 {
     public class EndTurnPackage
     {
@@ -13,5 +7,6 @@ namespace KingdomEngine.Model
         public int PeasantCount { get; set; }
         public int MarketplaceCount { get; set; }
         public int FarmCount { get; set; }
+        public int FoodCount { get; set; }
     }
 }
