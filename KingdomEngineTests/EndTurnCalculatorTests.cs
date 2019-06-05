@@ -3,28 +3,46 @@ using KingdomEngine.Logic;
 using KingdomEngine.Model;
 using NUnit.Framework;
 
-
 namespace KingdomEngineTests
 {
     [TestFixture]
     public class EndTurnCalculatorTests
     {
-        [Test]
-        public void EndTurn(int peasantCount, int foodCount, int expectedTaxIncome)
+        private EndTurnSettings endTurnSettings;
+        private IEndTurnCalculator endTurnCalculator;
+
+        [SetUp]
+        public void SetUp()
         {
-            var endTurnSettings = new EndTurnSettings
+            endTurnSettings = new EndTurnSettings
             {
-                FoodConsumptionRate = 1, FoodProductionRate = 2, PeasantGainPercentage = 5, PeasantIncome = 10,
-                PeasantsPerFarm = 5, TaxRate = 7
+                FoodConsumptionRate = 1, 
+                FoodProductionRate = 2, 
+                PeasantGainPercentage = 5, 
+                PeasantIncome = 10,
+                PeasantsPerFarm = 5, 
+                TaxRate = 7
             };
 
-            var endTurnCalculator = new EndTurnCalculator(endTurnSettings);
+            endTurnCalculator = new EndTurnCalculator(endTurnSettings);
+        }
 
-            //var endTurnPackage
+        [TestCase(100, 200)]
+        [TestCase(0, 0)]
+        public void EndTurn_FoodProduced(int farmCount, int expectedFoodProduced)
+        {
+            var endTurnPackage = new EndTurnPackage { FarmCount = farmCount };
+            endTurnCalculator.EndTurn(endTurnPackage);
+            Assert.That(endTurnCalculator.FoodProduced, Is.EqualTo(expectedFoodProduced));
+        }
 
-            //endTurnCalculator.EndTurn();
-
-            Assert.That(endTurnCalculator.TaxIncome, Is.EqualTo(expectedTaxIncome));
+        [TestCase(100, 100)]
+        [TestCase(0, 0)]
+        public void EndTurn_FoodConsumed(int peasantCount, int expectedFoodConsumed)
+        {
+            var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount };
+            endTurnCalculator.EndTurn(endTurnPackage);
+            Assert.That(endTurnCalculator.FoodProduced, Is.EqualTo(expectedFoodConsumed));
         }
     }
 }
