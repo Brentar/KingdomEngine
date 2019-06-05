@@ -1,12 +1,14 @@
 ﻿using KingdomEngine.Model;
 
-namespace KingdomEngine
+namespace KingdomEngine.Interfaces
 {
     public interface IEndTurnCalculator
     {
-        void EndTurn(EndTurnPackage endTurnPackage);
         int PeasantsGained { get; }
         int PeasantsLost { get; }
         int FoodProduced { get; }
+        int FoodConsumed { get; }
+        int TaxIncome { get; }
+        void EndTurn(EndTurnPackage endTurnPackage);
     }
 }

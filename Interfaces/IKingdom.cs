@@ -1,4 +1,4 @@
-﻿namespace KingdomEngine.Model
+﻿namespace KingdomEngine.Interfaces
 {
     public interface IKingdom
     {

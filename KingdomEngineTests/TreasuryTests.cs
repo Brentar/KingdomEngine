@@ -1,5 +1,7 @@
-﻿using KingdomEngine.Logic;
-using KingdomEngine.Model;
+﻿using System;
+using KingdomEngine;
+using KingdomEngine.Interfaces;
+using KingdomEngine.Logic;
 using NUnit.Framework;
 
 namespace KingdomEngineTests
@@ -7,37 +9,50 @@ namespace KingdomEngineTests
     [TestFixture]
     public class TreasuryTests
     {
-        private const uint BaseFarmCost = 100;
+        private ITreasury treasury;
+        private const int InitialGold = 100;
 
         [SetUp]
         public void SetUp()
         {
-            var costCalculator = new CostCalculator(new CostCalculatorSettings());
-            var treasury = new Treasury(costCalculator);
-            var x = 0;
+            treasury = new Treasury(InitialGold);
         }
 
-        [TestCase(100u)]
-        [TestCase(0u)]
-        public void AddGold(uint gold)
+        [TestCase(100, 200)]
+        [TestCase(0, 100)]
+        public void Deposit(int amount, int expectedGold)
         {
-            var costCalculator = new CostCalculator(new CostCalculatorSettings());
-            var treasury = new Treasury(costCalculator);
-
-            treasury.AddGold(gold);
-
-            Assert.That(treasury.Gold, Is.EqualTo(gold));
-        }
-
-        [TestCase(100u, 50u)]
-        public void BuyFarm(uint baseFarmCost, uint expectedGold)
-        {
-            var costCalculator = new CostCalculator(new CostCalculatorSettings { BaseFarmCost = baseFarmCost });
-            var treasury = new Treasury(costCalculator);
-
-            treasury.BuyFarm();
-
+            treasury.Deposit(amount);
             Assert.That(treasury.Gold, Is.EqualTo(expectedGold));
+        }
+
+        [TestCase(-1)]
+        [TestCase(-10)]
+        public void Deposit_Throws_OutOfRange(int gold)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => treasury.Deposit(gold));
+        }
+
+        [TestCase(80, 20)]
+        [TestCase(0, 100)]
+        public void Withdraw(int amount, int expectedGold)
+        {
+            treasury.Withdraw(amount);
+            Assert.That(treasury.Gold, Is.EqualTo(expectedGold));
+        }
+
+        [TestCase(500)]
+        [TestCase(101)]
+        public void Withdraw_Throws_NotEnoughGold(int amount)
+        {
+            Assert.Throws<NotEnoughGoldException>(() => treasury.Withdraw(amount));
+        }
+
+        [TestCase(-1)]
+        [TestCase(-10)]
+        public void Withdraw_Throws_OutOfRange(int amount)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => treasury.Withdraw(amount));
         }
     }
 }

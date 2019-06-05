@@ -1,4 +1,5 @@
 ﻿using System;
+using KingdomEngine.Interfaces;
 using KingdomEngine.Model;
 
 namespace KingdomEngine.Logic
@@ -8,13 +9,13 @@ namespace KingdomEngine.Logic
         private readonly EndTurnSettings settings;
         private const double PeasantLossRate = .1;
         private const double PeasantGainRate = .1;
+        private EndTurnPackage endTurnPackage;
 
         public EndTurnCalculator(EndTurnSettings settings)
         {
             this.settings = settings;
         }
 
-        private EndTurnPackage EndTurnPackage { get; set; }
         public int FoodProduced { get; private set; }
         public int FoodConsumed { get; set; }
         public int TaxIncome { get; set; }
@@ -25,7 +26,7 @@ namespace KingdomEngine.Logic
 
         public void EndTurn(EndTurnPackage endTurnPackage)
         {
-            EndTurnPackage = endTurnPackage;
+            this.endTurnPackage = endTurnPackage;
 
             SetFoodProduced();
             SetFoodConsumed();
@@ -36,17 +37,17 @@ namespace KingdomEngine.Logic
 
         private void SetFoodProduced()
         {
-            FoodProduced = EndTurnPackage.FarmCount * settings.FoodProductionRate;
+            FoodProduced = endTurnPackage.FarmCount * settings.FoodProductionRate;
         }
 
         private void SetFoodConsumed()
         {
-            FoodConsumed = EndTurnPackage.PeasantCount * settings.FoodConsumptionRate;
+            FoodConsumed = endTurnPackage.PeasantCount * settings.FoodConsumptionRate;
         }
 
         private void SetTaxIncome()
         {
-            TaxIncome = EndTurnPackage.PeasantCount * settings.TaxRate;
+            TaxIncome = endTurnPackage.PeasantCount * settings.TaxRate;
         }
 
         public void SetPeasantsLost()
@@ -54,12 +55,12 @@ namespace KingdomEngine.Logic
             PeasantsLost =
                 AllPeasantsFed()
                     ? 0
-                    : Convert.ToInt32(EndTurnPackage.PeasantCount * PeasantLossRate);
+                    : Convert.ToInt32(endTurnPackage.PeasantCount * PeasantLossRate);
         }
 
         private bool AllPeasantsFed()
         {
-            return settings.FoodConsumptionRate * EndTurnPackage.PeasantCount < EndTurnPackage.FoodCount;
+            return settings.FoodConsumptionRate * endTurnPackage.PeasantCount < endTurnPackage.FoodCount;
         }
 
         private void SetPeasantsGained()
@@ -67,7 +68,7 @@ namespace KingdomEngine.Logic
             PeasantsGained =
                 !AllPeasantsFed()
                     ? 0
-                    : Convert.ToInt32(EndTurnPackage.PeasantCount * PeasantGainRate);
+                    : Convert.ToInt32(endTurnPackage.PeasantCount * PeasantGainRate);
         }
     }
 }

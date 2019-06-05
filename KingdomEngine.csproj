@@ -39,17 +39,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IEndTurnCalculator.cs" />
+    <Compile Include="Interfaces\IEndTurnCalculator.cs" />
     <Compile Include="Logic\Treasury.cs" />
+    <Compile Include="Model\TurnResults.cs" />
     <Compile Include="Utility\Exceptions.cs" />
-    <Compile Include="ITreasury.cs" />
+    <Compile Include="Interfaces\ITreasury.cs" />
     <Compile Include="Model\InitialValues.cs" />
-    <Compile Include="Logic\CostCalculator.cs" />
+    <Compile Include="Logic\Economy.cs" />
     <Compile Include="Utility\Maybe.cs" />
-    <Compile Include="Model\CostCalculatorSettings.cs" />
+    <Compile Include="Model\EconomySettings.cs" />
     <Compile Include="Model\EndTurnPackage.cs" />
-    <Compile Include="IKingdom.cs" />
-    <Compile Include="ICostCalculator.cs" />
+    <Compile Include="Interfaces\IKingdom.cs" />
+    <Compile Include="Interfaces\ICostCalculator.cs" />
     <Compile Include="Logic\Kingdom.cs" />
     <Compile Include="Model\EndTurnSettings.cs" />
     <Compile Include="Logic\RaidHandler.cs" />

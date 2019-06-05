@@ -1,26 +1,18 @@
 ﻿using System;
+using KingdomEngine.Interfaces;
 
 namespace KingdomEngine.Logic
 {
     public class Treasury : ITreasury
     {
-        private readonly ICostCalculator calculator;
-        public uint Gold { get; private set; }
-
-        public Treasury(ICostCalculator calculator)
+        public Treasury(int gold)
         {
-            this.calculator = calculator;
+            Gold = gold;
         }
 
-        public uint GetFarmCost() => calculator.FarmCost;
+        public int Gold { get; private set; }
 
-        public uint GetMarketplaceCost() => calculator.MarketplaceCost;
-
-        public uint GetKnightCost() => calculator.KnightCost;
-
-        public void InflateCosts() => calculator.InflateCosts();
-
-        public void AddGold(uint amount)
+        public void Deposit(int amount)
         {
             if (amount < 0)
                 throw new ArgumentOutOfRangeException(nameof(amount));
@@ -28,32 +20,15 @@ namespace KingdomEngine.Logic
             Gold += amount;
         }
 
-        public void BuyFarm()
+        public void Withdraw(int amount)
         {
-            SpendGold(calculator.FarmCost);
+            if (amount < 0)
+                throw new ArgumentOutOfRangeException(nameof(amount));
+
+            if (amount > Gold)
+                throw new NotEnoughGoldException();
+
+            Gold -= amount;
         }
-
-        public void BuyMarketplace()
-        {
-            SpendGold(calculator.MarketplaceCost);
-        }
-
-        public void TrainKnight()
-        {
-            SpendGold(calculator.KnightCost);
-        }
-
-        public void TrainArcher()
-        {
-            SpendGold(calculator.ArcherCost);
-        }
-
-        private void SpendGold(uint cost)
-        {
-            if (Gold < cost)            
-                throw new NotEnoughGoldException();            
-
-            Gold -= cost;
-        }       
     }
 }
