@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IEndTurnCalculator.cs" />
+    <Compile Include="Logic\FoodConsumption.cs" />
+    <Compile Include="Logic\Randomizer.cs" />
     <Compile Include="Logic\Treasury.cs" />
     <Compile Include="Model\TurnResults.cs" />
     <Compile Include="Utility\Exceptions.cs" />

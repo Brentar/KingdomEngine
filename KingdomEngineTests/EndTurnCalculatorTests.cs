@@ -1,7 +1,9 @@
-﻿using KingdomEngine.Interfaces;
+﻿using System;
+using KingdomEngine.Interfaces;
 using KingdomEngine.Logic;
 using KingdomEngine.Model;
 using NUnit.Framework;
+using Moq;
 
 namespace KingdomEngineTests
 {
@@ -19,7 +21,7 @@ namespace KingdomEngineTests
                 FoodConsumptionRate = 1, 
                 FoodProductionRate = 2, 
                 PeasantGainPercentage = 5, 
-                PeasantIncome = 10,
+                PeasantIncome = 7,
                 PeasantsPerFarm = 5, 
                 TaxRate = 7
             };
@@ -32,7 +34,12 @@ namespace KingdomEngineTests
         public void EndTurn_FoodProduced(int farmCount, int expectedFoodProduced)
         {
             var endTurnPackage = new EndTurnPackage { FarmCount = farmCount };
+
+            Mock<IRandomizer> r = new Mock<IRandomizer>();
+            r.Setup(x => x.GetRandomInteger(180, 220)).Returns(189);
+
             endTurnCalculator.EndTurn(endTurnPackage);
+            
             Assert.That(endTurnCalculator.FoodProduced, Is.EqualTo(expectedFoodProduced));
         }
 
@@ -42,7 +49,16 @@ namespace KingdomEngineTests
         {
             var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount };
             endTurnCalculator.EndTurn(endTurnPackage);
-            Assert.That(endTurnCalculator.FoodProduced, Is.EqualTo(expectedFoodConsumed));
+            Assert.That(endTurnCalculator.FoodConsumed, Is.EqualTo(expectedFoodConsumed));
+        }
+
+        [TestCase(99, 49)]
+        [TestCase(0, 0)]
+        public void EndTurn_TaxIncome(int peasantCount, int expectedTaxIncome)
+        {
+            var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount };
+            endTurnCalculator.EndTurn(endTurnPackage);
+            Assert.That(endTurnCalculator.TaxIncome, Is.EqualTo(expectedTaxIncome));
         }
     }
 }
