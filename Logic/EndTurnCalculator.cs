@@ -13,13 +13,13 @@ namespace KingdomEngine.Logic
         private int availablePeasants = 5000;
         private const double RandomizationMultiplier = .1;
         private readonly Random random;
-        private IRandomizer randomizer;
+
 
         public EndTurnCalculator(EndTurnSettings settings, IRandomizer randomizer)
         {
             random = new Random();
             this.settings = settings;
-            this.randomizer = randomizer;
+            //this.randomizer = randomizer;
         }
 
         public int FoodProduced { get; private set; }
@@ -43,8 +43,9 @@ namespace KingdomEngine.Logic
 
         private void SetFoodProduced()
         {
-            int foodProduced = endTurnPackage.FarmCount * settings.FoodProductionRate;
-            FoodProduced = GetRandomizedAmount(foodProduced);
+            FoodProduced =
+                GetRandomizedAmount(
+                    endTurnPackage.FarmCount * settings.FoodProductionRate);
         }
 
         private void SetFoodConsumed()
@@ -82,7 +83,7 @@ namespace KingdomEngine.Logic
 
         private int GetRandomizedAmount(int amount)
         {
-            int plusOrMinusAmount = Convert.ToInt32(amount * RandomizationMultiplier);
+            int plusOrMinusAmount = Convert.ToInt32(amount * settings.RandomizationMultiplier);
             int minRange = amount - plusOrMinusAmount;
             int maxRange = amount + plusOrMinusAmount;
             return random.Next(minRange, maxRange);

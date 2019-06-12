@@ -1,4 +1,6 @@
-﻿namespace KingdomEngine.Model
+﻿using System.Dynamic;
+
+namespace KingdomEngine.Model
 {
     public class EndTurnSettings
     {
@@ -8,6 +10,6 @@
         public int PeasantsPerFarm { get; set; }
         public int TaxRate { get; set; }
         public int PeasantGainPercentage { get; set; }
-        public const double RandomizationMultiplier = .1;
+        public double RandomizationMultiplier { get; set; }
     }
 }
