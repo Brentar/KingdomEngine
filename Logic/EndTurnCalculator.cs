@@ -11,15 +11,13 @@ namespace KingdomEngine.Logic
         private const double PeasantGainRate = .1;
         private EndTurnPackage endTurnPackage;
         private int availablePeasants = 5000;
-        private const double RandomizationMultiplier = .1;
-        private readonly Random random;
+        private readonly IRandomizer randomizer;
 
 
         public EndTurnCalculator(EndTurnSettings settings, IRandomizer randomizer)
         {
-            random = new Random();
             this.settings = settings;
-            //this.randomizer = randomizer;
+            this.randomizer = randomizer;
         }
 
         public int FoodProduced { get; private set; }
@@ -32,7 +30,7 @@ namespace KingdomEngine.Logic
 
         public void EndTurn(EndTurnPackage package)
         {
-            this.endTurnPackage = package;
+            endTurnPackage = package;
 
             SetFoodProduced();
             SetFoodConsumed();
@@ -43,14 +41,14 @@ namespace KingdomEngine.Logic
 
         private void SetFoodProduced()
         {
-            FoodProduced =
-                GetRandomizedAmount(
-                    endTurnPackage.FarmCount * settings.FoodProductionRate);
+            FoodProduced = randomizer.GetRandomizedAmount(endTurnPackage.FarmCount * settings.FoodProductionRate);
+
+            //FoodProduced = GetRandomizedAmount(endTurnPackage.FarmCount * settings.FoodProductionRate);
         }
 
         private void SetFoodConsumed()
         {
-            FoodConsumed = GetRandomizedAmount(endTurnPackage.PeasantCount * settings.FoodConsumptionRate);
+            FoodConsumed = randomizer.GetRandomizedAmount(endTurnPackage.PeasantCount * settings.FoodConsumptionRate);
         }
 
         private void SetTaxIncome()
@@ -79,14 +77,6 @@ namespace KingdomEngine.Logic
                 !AllPeasantsFed()
                     ? 0
                     : Convert.ToInt32(endTurnPackage.PeasantCount * PeasantGainRate);
-        }
-
-        private int GetRandomizedAmount(int amount)
-        {
-            int plusOrMinusAmount = Convert.ToInt32(amount * settings.RandomizationMultiplier);
-            int minRange = amount - plusOrMinusAmount;
-            int maxRange = amount + plusOrMinusAmount;
-            return random.Next(minRange, maxRange);
         }
     }
 }

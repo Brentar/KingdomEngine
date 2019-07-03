@@ -19,10 +19,14 @@ namespace KingdomEngine.Logic
 
         public int GetRandomizedAmount(int amount)
         {
+            if (amount == 0) return 0;
+
             int plusOrMinusAmount = Convert.ToInt32(amount * randomizationMultiplier);
             int minRange = amount - plusOrMinusAmount;
             int maxRange = amount + plusOrMinusAmount;
-            return random.Next(minRange, maxRange);
+            int randomizedAmount = random.Next(minRange, maxRange);
+
+            return randomizedAmount < 1 ? 1 : randomizedAmount;
         }
     }
 }

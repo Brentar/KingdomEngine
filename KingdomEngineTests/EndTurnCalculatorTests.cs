@@ -1,4 +1,5 @@
-﻿using KingdomEngine.Interfaces;
+﻿using System;
+using KingdomEngine.Interfaces;
 using KingdomEngine.Logic;
 using KingdomEngine.Model;
 using NUnit.Framework;
@@ -11,6 +12,7 @@ namespace KingdomEngineTests
     {
         private EndTurnSettings endTurnSettings;
         private IEndTurnCalculator endTurnCalculator;
+        private Mock<IRandomizer> mockRandomizer;
 
         [SetUp]
         public void SetUp()
@@ -26,24 +28,16 @@ namespace KingdomEngineTests
                 RandomizationMultiplier = .1
             };
 
-            endTurnCalculator = new EndTurnCalculator(endTurnSettings, new Randomizer(endTurnSettings.RandomizationMultiplier));
+            mockRandomizer = new Mock<IRandomizer>();
+            endTurnCalculator = new EndTurnCalculator(endTurnSettings, mockRandomizer.Object);
         }
 
-        [TestCase(100, 180, 220)]
-        [TestCase(0, 0, 0)]
-        public void EndTurn_FoodProduced(int farmCount, int minRange, int maxRange)
+        [TestCase(100, 212)]
+        [TestCase(0, 0)]
+        public void EndTurn_FoodProduced(int farmCount, int expectedAmount)
         {
-            var endTurnPackage = new EndTurnPackage { FarmCount = farmCount };
-            endTurnCalculator.EndTurn(endTurnPackage);
-            Assert.That(endTurnCalculator.FoodProduced, Is.InRange(minRange, maxRange));
-        }
-
-        [TestCase(100, 200, 212)]
-        //[TestCase(0, 0)]
-        public void EndTurn_FoodProduced2(int farmCount, int nonRandomAmount, int expectedAmount)
-        {
-            Mock<IRandomizer> r = new Mock<IRandomizer>();
-            r.Setup(x => x.GetRandomizedAmount(nonRandomAmount)).Returns(expectedAmount);
+            int nonRandomAmount = Convert.ToInt32(farmCount * endTurnSettings.FoodProductionRate);
+            mockRandomizer.Setup(x => x.GetRandomizedAmount(nonRandomAmount)).Returns(expectedAmount);
             
             var endTurnPackage = new EndTurnPackage { FarmCount = farmCount };
             endTurnCalculator.EndTurn(endTurnPackage);
@@ -53,11 +47,15 @@ namespace KingdomEngineTests
 
         [TestCase(100, 100)]
         [TestCase(0, 0)]
-        public void EndTurn_FoodConsumed(int peasantCount, int expectedFoodConsumed)
+        public void EndTurn_FoodConsumed(int peasantCount, int expectedAmount)
         {
+            int nonRandomAmount = Convert.ToInt32(peasantCount * endTurnSettings.FoodConsumptionRate);
+            mockRandomizer.Setup(x => x.GetRandomizedAmount(nonRandomAmount)).Returns(expectedAmount);
+
             var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount };
             endTurnCalculator.EndTurn(endTurnPackage);
-            Assert.That(endTurnCalculator.FoodConsumed, Is.EqualTo(expectedFoodConsumed));
+
+            Assert.That(endTurnCalculator.FoodConsumed, Is.EqualTo(expectedAmount));
         }
 
         [TestCase(99, 49)]
@@ -67,6 +65,15 @@ namespace KingdomEngineTests
             var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount };
             endTurnCalculator.EndTurn(endTurnPackage);
             Assert.That(endTurnCalculator.TaxIncome, Is.EqualTo(expectedTaxIncome));
+        }
+
+        [TestCase()]
+        public void EndTurn_PeasantsLost(int peasantCount, int foodCount, int expected)
+        {
+            var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount };
+            endTurnCalculator.EndTurn(endTurnPackage);
+
+            Assert.That(endTurnCalculator.PeasantsLost, Is.EqualTo(expected));
         }
     }
 }
