@@ -52,10 +52,7 @@ namespace KingdomEngine.Logic
             ArcherCount++;
         }
 
-        public int GetFarmCost()
-        {
-            return economy.FarmCost;
-        }
+        public int GetFarmCost() => economy.FarmCost;
 
         public int GetKnightCost()
         {
