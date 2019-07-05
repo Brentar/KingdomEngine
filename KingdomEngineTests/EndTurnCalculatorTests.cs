@@ -21,7 +21,8 @@ namespace KingdomEngineTests
             {
                 FoodConsumptionRate = 1, 
                 FoodProductionRate = 2, 
-                PeasantGainPercentage = 5, 
+                PeasantGainRate = .1, 
+                PeasantLossRate = .1,
                 PeasantIncome = 7,
                 PeasantsPerFarm = 5, 
                 TaxRate = 7,
@@ -67,13 +68,30 @@ namespace KingdomEngineTests
             Assert.That(endTurnCalculator.TaxIncome, Is.EqualTo(expectedTaxIncome));
         }
 
-        [TestCase()]
+        [TestCase(100, 0, 10)]
+        [TestCase(10, 100, 0)]
         public void EndTurn_PeasantsLost(int peasantCount, int foodCount, int expected)
         {
-            var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount };
+            int peasantsLost = Convert.ToInt32(peasantCount * endTurnSettings.PeasantLossRate);
+            mockRandomizer.Setup(x => x.GetRandomizedAmount(peasantsLost)).Returns(peasantsLost);
+
+            var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount, FoodCount = foodCount };
             endTurnCalculator.EndTurn(endTurnPackage);
 
             Assert.That(endTurnCalculator.PeasantsLost, Is.EqualTo(expected));
+        }
+
+        [TestCase(100, 0, 0)]
+        [TestCase(100, 500, 10)]
+        public void EndTurn_PeasantsGained(int peasantCount, int foodCount, int expected)
+        {
+            int peasantsGained = Convert.ToInt32(peasantCount * endTurnSettings.PeasantGainRate);
+            mockRandomizer.Setup(x => x.GetRandomizedAmount(peasantsGained)).Returns(peasantsGained);
+
+            var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount, FoodCount = foodCount };
+            endTurnCalculator.EndTurn(endTurnPackage);
+
+            Assert.That(endTurnCalculator.PeasantsGained, Is.EqualTo(expected));
         }
     }
 }

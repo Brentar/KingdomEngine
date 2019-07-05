@@ -7,12 +7,8 @@ namespace KingdomEngine.Logic
     public class EndTurnCalculator : IEndTurnCalculator
     {
         private readonly EndTurnSettings settings;
-        private const double PeasantLossRate = .1;
-        private const double PeasantGainRate = .1;
         private EndTurnPackage endTurnPackage;
-        private int availablePeasants = 5000;
         private readonly IRandomizer randomizer;
-
 
         public EndTurnCalculator(EndTurnSettings settings, IRandomizer randomizer)
         {
@@ -25,8 +21,6 @@ namespace KingdomEngine.Logic
         public int TaxIncome { get; set; }
         public int PeasantsLost { get; set; }
         public int PeasantsGained { get; set; }
-        public RaidResults RaidResults { get; set; }
-        public bool Raided { get; set; }
 
         public void EndTurn(EndTurnPackage package)
         {
@@ -42,13 +36,21 @@ namespace KingdomEngine.Logic
         private void SetFoodProduced()
         {
             FoodProduced = randomizer.GetRandomizedAmount(endTurnPackage.FarmCount * settings.FoodProductionRate);
-
-            //FoodProduced = GetRandomizedAmount(endTurnPackage.FarmCount * settings.FoodProductionRate);
         }
 
         private void SetFoodConsumed()
         {
-            FoodConsumed = randomizer.GetRandomizedAmount(endTurnPackage.PeasantCount * settings.FoodConsumptionRate);
+            int foodNeeded = GetFoodNeeded();
+            int totalFood = endTurnPackage.FoodCount + FoodProduced;
+            FoodConsumed = randomizer.GetRandomizedAmount(foodNeeded);
+
+            if (FoodConsumed > totalFood)
+                FoodConsumed = totalFood;
+        }
+
+        private int GetFoodNeeded()
+        {
+            return endTurnPackage.PeasantCount * settings.FoodConsumptionRate;
         }
 
         private void SetTaxIncome()
@@ -58,17 +60,20 @@ namespace KingdomEngine.Logic
             TaxIncome = Convert.ToInt32(peasantIncome * taxMultiplier);
         }
 
+        private bool AllPeasantsFed()
+        {
+            int foodNeeded = GetFoodNeeded();
+            int totalFood = FoodProduced + endTurnPackage.FoodCount;
+            
+            return totalFood >= foodNeeded;
+        }
+
         private void SetPeasantsLost()
         {
             PeasantsLost =
                 AllPeasantsFed()
                     ? 0
-                    : Convert.ToInt32(availablePeasants * PeasantLossRate);
-        }
-
-        private bool AllPeasantsFed()
-        {
-            return settings.FoodConsumptionRate * endTurnPackage.PeasantCount < endTurnPackage.FoodCount;
+                    : randomizer.GetRandomizedAmount(Convert.ToInt32(endTurnPackage.PeasantCount * settings.PeasantLossRate));
         }
 
         private void SetPeasantsGained()
@@ -76,7 +81,7 @@ namespace KingdomEngine.Logic
             PeasantsGained =
                 !AllPeasantsFed()
                     ? 0
-                    : Convert.ToInt32(endTurnPackage.PeasantCount * PeasantGainRate);
+                    : randomizer.GetRandomizedAmount(Convert.ToInt32(endTurnPackage.PeasantCount * settings.PeasantGainRate));
         }
     }
 }

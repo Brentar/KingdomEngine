@@ -9,7 +9,8 @@ namespace KingdomEngine.Model
         public int PeasantIncome { get; set; }
         public int PeasantsPerFarm { get; set; }
         public int TaxRate { get; set; }
-        public int PeasantGainPercentage { get; set; }
-        public double RandomizationMultiplier { get; set; }
+        public double PeasantGainRate { get; set; }
+        public double PeasantLossRate { get; set; }
+        public double RandomizationMultiplier { get; set; }       
     }
 }
