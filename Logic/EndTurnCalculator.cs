@@ -70,10 +70,18 @@ namespace KingdomEngine.Logic
 
         private void SetPeasantsLost()
         {
-            PeasantsLost =
+            int peasantsLost =
                 AllPeasantsFed()
                     ? 0
-                    : randomizer.GetRandomizedAmount(Convert.ToInt32(endTurnPackage.PeasantCount * settings.PeasantLossRate));
+                    : randomizer.GetRandomizedAmount(
+                        Convert.ToInt32(endTurnPackage.PeasantCount * settings.PeasantLossRate));
+
+            int totalPeasants = endTurnPackage.PeasantCount + PeasantsGained;
+
+            if (peasantsLost > totalPeasants)
+                peasantsLost = totalPeasants;
+
+            PeasantsLost = peasantsLost;
         }
 
         private void SetPeasantsGained()

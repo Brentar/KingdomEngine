@@ -14,6 +14,7 @@ namespace KingdomEngine.Logic
             this.treasury = treasury;
             this.endTurnCalculator = endTurnCalculator;
             this.economy = economy;
+            Turn = 1;
         }
 
         public int PeasantCount { get; private set; }
@@ -23,9 +24,11 @@ namespace KingdomEngine.Logic
         public int MarketplaceCount { get; private set; }
         public int FarmCount { get; private set; }
         public double TaxRate { get; set; }   
-        public int Gold => treasury.Gold;
         public int Turn { get; set; }
-
+        public int Gold => treasury.Gold;
+        public int FarmCost => economy.FarmCost;
+        public int ArcherCost => economy.ArcherCost;
+        public int MarketplaceCost => economy.MarketplaceCost;
         public void BuyFarm()
         {
             treasury.Withdraw(economy.FarmCost);
@@ -51,30 +54,21 @@ namespace KingdomEngine.Logic
             treasury.Withdraw(archerCost);
             ArcherCount++;
         }
-
-        public int GetFarmCost() => economy.FarmCost;
-
-        public int GetKnightCost()
-        {
-            return economy.KnightCost;
-        }
-
-        public int GetMarketplaceCost()
-        {
-            return economy.MarketplaceCost;
-        }
+        
+        public int GetKnightCost() => economy.KnightCost;
 
         public void EndTurn()
         {
-            var endTurnPackage = GetEndTurnPackage();
-            endTurnCalculator.EndTurn(endTurnPackage);
+            endTurnCalculator.EndTurn(GetEndTurnPackage());
 
             PeasantCount += endTurnCalculator.PeasantsGained;
             PeasantCount -= endTurnCalculator.PeasantsLost;
             FoodCount += endTurnCalculator.FoodProduced;
+            FoodCount -= endTurnCalculator.FoodConsumed;
+
             treasury.Deposit(endTurnCalculator.TaxIncome);
-            
             economy.InflateCosts();
+
             Turn++;
         }
 
@@ -82,7 +76,10 @@ namespace KingdomEngine.Logic
         {
             var turnResults = new TurnResults
             {
-                FoodConsumed = endTurnCalculator.FoodConsumed
+                FoodConsumed = endTurnCalculator.FoodConsumed,
+                FoodProduced = endTurnCalculator.FoodProduced,
+                PeasantsGained = endTurnCalculator.PeasantsGained,
+                PeasantsLost = endTurnCalculator.PeasantsLost
             };
 
             return turnResults;

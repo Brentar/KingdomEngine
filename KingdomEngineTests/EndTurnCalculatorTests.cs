@@ -46,17 +46,20 @@ namespace KingdomEngineTests
             Assert.That(endTurnCalculator.FoodProduced, Is.EqualTo(expectedAmount));
         }
 
-        [TestCase(100, 100)]
-        [TestCase(0, 0)]
-        public void EndTurn_FoodConsumed(int peasantCount, int expectedAmount)
+        [TestCase(100, 100, 100)]
+        [TestCase(0, 0, 0)]
+        [TestCase(100, 0, 0)]
+        [TestCase(0, 100, 0)]
+        [TestCase(100, 50, 50)]
+        public void EndTurn_FoodConsumed(int peasantCount, int foodCount, int expected)
         {
             int nonRandomAmount = Convert.ToInt32(peasantCount * endTurnSettings.FoodConsumptionRate);
-            mockRandomizer.Setup(x => x.GetRandomizedAmount(nonRandomAmount)).Returns(expectedAmount);
+            mockRandomizer.Setup(x => x.GetRandomizedAmount(nonRandomAmount)).Returns(nonRandomAmount);
 
-            var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount };
+            var endTurnPackage = new EndTurnPackage { PeasantCount = peasantCount, FoodCount = foodCount };
             endTurnCalculator.EndTurn(endTurnPackage);
 
-            Assert.That(endTurnCalculator.FoodConsumed, Is.EqualTo(expectedAmount));
+            Assert.That(endTurnCalculator.FoodConsumed, Is.EqualTo(expected));
         }
 
         [TestCase(99, 49)]
