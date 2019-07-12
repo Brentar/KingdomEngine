@@ -9,11 +9,13 @@ namespace KingdomEngine.Logic
         private readonly EndTurnSettings settings;
         private EndTurnPackage endTurnPackage;
         private readonly IRandomizer randomizer;
+        private int availablePeasants;
 
         public EndTurnCalculator(EndTurnSettings settings, IRandomizer randomizer)
         {
             this.settings = settings;
             this.randomizer = randomizer;
+            availablePeasants = settings.AvailablePeasants;
         }
 
         public int FoodProduced { get; private set; }
@@ -89,7 +91,9 @@ namespace KingdomEngine.Logic
             PeasantsGained =
                 !AllPeasantsFed()
                     ? 0
-                    : randomizer.GetRandomizedAmount(Convert.ToInt32(endTurnPackage.PeasantCount * settings.PeasantGainRate));
+                    : randomizer.GetRandomizedAmount(Convert.ToInt32(settings.AvailablePeasants * settings.PeasantGainRate));
+
+            availablePeasants -= PeasantsGained;
         }
     }
 }

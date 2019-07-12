@@ -1,5 +1,6 @@
 ﻿using System;
 using KingdomEngine.Interfaces;
+using KingdomEngine.Utility;
 
 namespace KingdomEngine.Logic
 {
@@ -26,7 +27,7 @@ namespace KingdomEngine.Logic
                 throw new ArgumentOutOfRangeException(nameof(amount));
 
             if (amount > Gold)
-                throw new NotEnoughGoldException();
+                throw new NotEnoughGoldException("Not enough gold.");
 
             Gold -= amount;
         }

@@ -2,6 +2,7 @@
 using KingdomEngine;
 using KingdomEngine.Interfaces;
 using KingdomEngine.Logic;
+using KingdomEngine.Utility;
 using NUnit.Framework;
 
 namespace KingdomEngineTests

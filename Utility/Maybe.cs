@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace KingdomEngine
+namespace KingdomEngine.Utility
 {
     public class Maybe<T> : IEnumerable<T>
     {

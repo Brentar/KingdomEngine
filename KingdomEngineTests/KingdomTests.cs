@@ -78,7 +78,7 @@ namespace KingdomEngineTests
         }
 
         [TestCase(20, 5, 70, 9)]
-        [TestCase(20, 5, 70, 9)]
+        [TestCase(100, 9, 250, 209)]
         public void EndTurn(int peasantsGained, int peasantsLost, int foodProduced, int foodConsumed)
         {
             mockEndTurnCalculator.Setup(x => x.PeasantsGained).Returns(peasantsGained);
@@ -93,10 +93,23 @@ namespace KingdomEngineTests
             Assert.That(kingdom.Turn, Is.EqualTo(2));
         }
 
-        [Test]
-        public void GetEndTurnResults(int peasantsGained)
+        [TestCase(1,2,3,4)]
+        public void GetEndTurnResults(int peasantsGained, int peasantsLost, int foodProduced, int foodConsumed)
         {
+            mockEndTurnCalculator.Setup(x => x.PeasantsGained).Returns(peasantsGained);
+            mockEndTurnCalculator.Setup(x => x.PeasantsLost).Returns(peasantsLost);
+            mockEndTurnCalculator.Setup(x => x.FoodProduced).Returns(foodProduced);
+            mockEndTurnCalculator.Setup(x => x.FoodConsumed).Returns(foodConsumed);
+            mockEndTurnCalculator.Setup(x => x.TaxIncome).Returns(10);
+
+            kingdom.EndTurn();
+
             var endTurnResults = kingdom.GetEndTurnResults();
+            Assert.That(endTurnResults.PeasantsGained, Is.EqualTo(peasantsGained));
+            Assert.That(endTurnResults.FoodConsumed,  Is.EqualTo(foodConsumed));
+            Assert.That(endTurnResults.FoodProduced, Is.EqualTo(foodProduced));
+            Assert.That(endTurnResults.PeasantsLost, Is.EqualTo(peasantsLost));
+            Assert.That(endTurnResults.TaxIncome, Is.EqualTo(10));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using KingdomEngine.Interfaces;
+﻿using System;
+using KingdomEngine.Interfaces;
 using KingdomEngine.Model;
 
 namespace KingdomEngine.Logic
@@ -43,6 +44,9 @@ namespace KingdomEngine.Logic
 
         public void TrainKnight()
         {
+            if (PeasantCount <= 0)
+                throw new InvalidOperationException("No peasants to train.");
+
             treasury.Withdraw(economy.KnightCost);
             PeasantCount--;
             KnightCount++;
@@ -79,7 +83,8 @@ namespace KingdomEngine.Logic
                 FoodConsumed = endTurnCalculator.FoodConsumed,
                 FoodProduced = endTurnCalculator.FoodProduced,
                 PeasantsGained = endTurnCalculator.PeasantsGained,
-                PeasantsLost = endTurnCalculator.PeasantsLost
+                PeasantsLost = endTurnCalculator.PeasantsLost,
+                TaxIncome = endTurnCalculator.TaxIncome
             };
 
             return turnResults;

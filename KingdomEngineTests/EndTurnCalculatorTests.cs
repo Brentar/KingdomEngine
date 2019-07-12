@@ -26,7 +26,8 @@ namespace KingdomEngineTests
                 PeasantIncome = 7,
                 PeasantsPerFarm = 5, 
                 TaxRate = 7,
-                RandomizationMultiplier = .1
+                RandomizationMultiplier = .1,
+                AvailablePeasants = 5000
             };
 
             mockRandomizer = new Mock<IRandomizer>();
