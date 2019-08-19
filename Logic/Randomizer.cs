@@ -6,6 +6,7 @@ namespace KingdomEngine.Logic
     {
         int GetRandomizedAmount(int amount);
     }
+
     public class Randomizer : IRandomizer
     {
         private readonly Random random;

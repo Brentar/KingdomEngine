@@ -30,9 +30,11 @@ namespace KingdomEngine.Logic
 
             SetFoodProduced();
             SetFoodConsumed();
-            SetPeasantsLost();
-            SetTaxIncome();
+
             SetPeasantsGained();
+            SetPeasantsLost();
+
+            SetTaxIncome();
         }
 
         private void SetFoodProduced()
@@ -58,7 +60,8 @@ namespace KingdomEngine.Logic
         private void SetTaxIncome()
         {
             double taxMultiplier = settings.TaxRate * .01;
-            int peasantIncome = settings.PeasantIncome * endTurnPackage.PeasantCount;
+            int peasantIncome = settings.PeasantIncome * (endTurnPackage.PeasantCount + PeasantsGained);
+
             TaxIncome = Convert.ToInt32(peasantIncome * taxMultiplier);
         }
 
@@ -70,13 +73,22 @@ namespace KingdomEngine.Logic
             return totalFood >= foodNeeded;
         }
 
+        private void SetPeasantsGained()
+        {
+            PeasantsGained = !AllPeasantsFed()
+                ? 0
+                : randomizer.GetRandomizedAmount(
+                    Convert.ToInt32(availablePeasants * settings.PeasantGainRate));
+
+            availablePeasants -= PeasantsGained;
+        }
+
         private void SetPeasantsLost()
         {
-            int peasantsLost =
-                AllPeasantsFed()
-                    ? 0
-                    : randomizer.GetRandomizedAmount(
-                        Convert.ToInt32(endTurnPackage.PeasantCount * settings.PeasantLossRate));
+            int peasantsLost = AllPeasantsFed()
+                ? 0
+                : randomizer.GetRandomizedAmount(
+                    Convert.ToInt32(endTurnPackage.PeasantCount * settings.PeasantLossRate));
 
             int totalPeasants = endTurnPackage.PeasantCount + PeasantsGained;
 
@@ -84,16 +96,7 @@ namespace KingdomEngine.Logic
                 peasantsLost = totalPeasants;
 
             PeasantsLost = peasantsLost;
-        }
-
-        private void SetPeasantsGained()
-        {
-            PeasantsGained =
-                !AllPeasantsFed()
-                    ? 0
-                    : randomizer.GetRandomizedAmount(Convert.ToInt32(settings.AvailablePeasants * settings.PeasantGainRate));
-
-            availablePeasants -= PeasantsGained;
+            availablePeasants += peasantsLost;
         }
     }
 }

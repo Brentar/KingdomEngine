@@ -8,7 +8,7 @@ namespace KingdomEngine.Model
     {
         private Kingdom kingdom;
         private int raidChance;
-
+        
         public RaidHandler(Kingdom kingdom)
         {
             this.kingdom = kingdom;
@@ -32,20 +32,28 @@ namespace KingdomEngine.Model
             return nums.Contains(hit);
         }
 
-        private RaidResults GetRaidResults()
+        private RaidResults GetRaidResults(int turn, int knightCount, int peasantCount)
         {
-            int enemyCount = kingdom.Turn*new Random().Next(1, 10);
-            bool win = kingdom.KnightCount > enemyCount;
+            int knightsLost = turn;
+            int peasantsLost = 0;
+            int foodLost = 0;
+            int farmsLost = 0;
 
-            var raidResults = new RaidResults
+            if (knightsLost > knightCount)
+                knightsLost = knightCount;
+
+            if (knightCount < turn)
             {
-                Win = win,
-                KnightsLost = Convert.ToInt32(enemyCount/2),
-                PeasantsKilled = win ? 0: Convert.ToInt32(enemyCount / 3),
-                FarmsDestroyed = win ? 0: Convert.ToInt32(kingdom.FarmCount * .1)
-            };
+                peasantsLost = turn * 2;
+                foodLost = 0;
+                farmsLost = turn * 2;
+            }
 
-            return raidResults;            
+            return new RaidResults
+            {
+                KnightsLost = knightCount < turn ? knightCount : turn,
+                FarmsDestroyed = knightCount < turn ? turn * 2 : 0
+            };
         }
     }
 }
