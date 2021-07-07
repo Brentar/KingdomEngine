@@ -24,12 +24,12 @@ namespace KingdomEngine.Logic
         public int FoodCount { get; private set; }
         public int MarketplaceCount { get; private set; }
         public int FarmCount { get; private set; }
-        public double TaxRate { get; set; }   
         public int Turn { get; set; }
         public int Gold => treasury.Gold;
         public int FarmCost => economy.FarmCost;
         public int ArcherCost => economy.ArcherCost;
         public int MarketplaceCost => economy.MarketplaceCost;
+
         public void BuyFarm()
         {
             treasury.Withdraw(economy.FarmCost);
